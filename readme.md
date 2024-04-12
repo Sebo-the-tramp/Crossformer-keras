@@ -9,3 +9,5 @@ You might wonder, "Why Keras?" Well, every once in a while, a person decides to 
 
 ## Joke aside
 It was written for a project, I hope it can be helpful to someone when it will start working!
+
+-> refer to readme_OLD.md for any other thing (technical)
