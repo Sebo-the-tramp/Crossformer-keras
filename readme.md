@@ -56,6 +56,14 @@ Estimated Total Size (MB): 43.35
 ====================================================================================================
 ```
 
+Small mismatch
+- DSW - OK
+- layer_norm - OK
+- encoder - 1,389,056 + 1,485,568 + 1,467,648 = 4342272 - OK
+- decoder - 1,724,934 * 4 = 6899736 - OK
+
+-> everything looks correct BUT the sum of parameters are different. LOL
+
 KERAS IMPLEMENTATION:
 
 ```bash
