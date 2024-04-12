@@ -44,6 +44,16 @@ Layer (type:depth-idx)                             Output Shape              Par
 |    |    └─DecoderLayer: 3-6                      [-1, 7, 4, 256]           1,724,934
 |    |    └─DecoderLayer: 3-7                      [-1, 7, 4, 256]           1,724,934
 ====================================================================================================
+Total params: 11,244,312
+Trainable params: 11,244,312
+Non-trainable params: 0
+Total mult-adds (M): 29.15
+====================================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.45
+Params size (MB): 42.89
+Estimated Total Size (MB): 43.35
+====================================================================================================
 ```
 
 KERAS IMPLEMENTATION:
