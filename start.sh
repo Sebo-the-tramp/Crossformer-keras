@@ -1,0 +1,1 @@
+python main_crossformer.py --data ETTh1 --in_len 168 --out_len 24 --seg_len 6 --itr 1
