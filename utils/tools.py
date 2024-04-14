@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 import json
 
 def adjust_learning_rate(optimizer, epoch, args):

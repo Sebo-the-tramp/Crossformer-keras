@@ -12,7 +12,7 @@ class FullAttention(layers.Layer):
     The Attention operation
     '''
     def __init__(self, scale=None, attention_dropout=0.1):
-        super(FullAttention, self).__init__()
+        super(FullAttention, self).__init__(name="Full_attention")
         self.scale = scale
         self.dropout = layers.Dropout(attention_dropout)
         
@@ -33,7 +33,7 @@ class AttentionLayer(layers.Layer):
     The Multi-head Self-Attention (MSA) Layer
     '''
     def __init__(self, d_model, n_heads, d_keys=None, d_values=None, dropout = 0.1):
-        super(AttentionLayer, self).__init__()
+        super(AttentionLayer, self).__init__(name="AttentionLayer")
 
         d_keys = d_keys or (d_model//n_heads)
         d_values = d_values or (d_model//n_heads)
@@ -74,7 +74,7 @@ class TwoStageAttentionLayer(layers.Layer):
     input/output shape: [batch_size, Data_dim(D), Seg_num(L), d_model]
     '''
     def __init__(self, seg_num, factor, d_model, n_heads, d_ff = None, dropout=0.1):
-        super(TwoStageAttentionLayer, self).__init__()
+        super(TwoStageAttentionLayer, self).__init__(name="TSA_layer")
         d_ff = d_ff or 4*d_model
         self.time_attention = AttentionLayer(d_model, n_heads, dropout = dropout)
         self.dim_sender = AttentionLayer(d_model, n_heads, dropout = dropout)
@@ -89,8 +89,8 @@ class TwoStageAttentionLayer(layers.Layer):
         self.norm3 = layers.LayerNormalization()
         self.norm4 = layers.LayerNormalization()
 
-        self.MLP1 = keras.Sequential([layers.Dense(d_ff), layers.Activation('gelu'), layers.Dense(d_model)])
-        self.MLP2 = keras.Sequential([layers.Dense(d_ff), layers.Activation('gelu'), layers.Dense(d_model)])
+        self.MLP1 = keras.Sequential([layers.Dense(d_ff), layers.Activation('gelu'), layers.Dense(d_model)], name="sequential_MLP1_2SA")
+        self.MLP2 = keras.Sequential([layers.Dense(d_ff), layers.Activation('gelu'), layers.Dense(d_model)], name="sequential_MLP2_2SA")
 
     def call(self, x):  
         #Cross Time Stage:

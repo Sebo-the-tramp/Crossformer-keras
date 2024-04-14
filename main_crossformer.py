@@ -1,20 +1,20 @@
 import argparse
 import os
-import torch
 
 from cross_exp.exp_crossformer_keras import Exp_crossformer
-from utils.tools import string_split
 
 import tensorflow as tf
 
 ## run eagerly
-tf.config.run_functions_eagerly(True)
+tf.disable_v2_behavior()
+# tf.config.run_functions_eagerly(False)
 
-# Configure TensorFlow to use a single thread
-tf.config.threading.set_intra_op_parallelism_threads(1)
-tf.config.threading.set_inter_op_parallelism_threads(1)
+# tf.config.set_visible_devices([], 'GPU')
+# tf.debugging.set_log_device_placement(True)
 
-tf.config.set_visible_devices([], 'GPU')
+
+
+
 
 
 parser = argparse.ArgumentParser(description='CrossFormer')
@@ -57,9 +57,16 @@ parser.add_argument('--devices', type=str, default='0,1,2,3',help='device ids of
 
 args = parser.parse_args()
 
-args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
+# args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
+
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
+
+tf.config.optimizer.set_jit(True)
+print(tf.config.optimizer)
 
 if args.use_gpu and args.use_multi_gpu:
+
     args.devices = args.devices.replace(' ','')
     device_ids = args.devices.split(',')
     args.device_ids = [int(id_) for id_ in device_ids]
@@ -80,7 +87,7 @@ if args.data in data_parser.keys():
     args.data_dim = data_info['data_dim']
     args.data_split = data_info['split']
 else:
-    args.data_split = string_split(args.data_split)
+    raise Exception("Data malformatted ")
 
 # print('Args in experiment:')
 # print(args)

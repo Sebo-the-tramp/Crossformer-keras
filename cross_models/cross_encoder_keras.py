@@ -2,7 +2,7 @@ import keras
 
 from keras import layers
 
-from cross_models.attn_keras import FullAttention, AttentionLayer, TwoStageAttentionLayer
+from crossformerkeras.cross_models.attn_keras import FullAttention, AttentionLayer, TwoStageAttentionLayer
 
 from math import ceil
 
@@ -15,14 +15,13 @@ class SegMerging(layers.Layer):
     get representation of a coarser scale
     we set win_size = 2 in our paper
     '''
-    def __init__(self, d_model, win_size, norm_layer=layers.LayerNormalization):
-        super().__init__()
+    def __init__(self, d_model, win_size, norm_layer=tf.keras.layers.LayerNormalization,name="SegMerging"):
+        super(SegMerging, self).__init__(name=name)
         self.d_model = d_model
         self.win_size = win_size
         self.linear_trans = layers.Dense(d_model)
         self.norm = norm_layer(axis=-1)
 
-    @tf.function
     def call(self, x):
         # print(tf.executing_eagerly())        
         batch_size, ts_d, seg_num, d_model = x.shape
@@ -56,7 +55,7 @@ class scale_block(layers.Layer):
     '''
     def __init__(self, win_size, d_model, n_heads, d_ff, depth, dropout, \
                     seg_num = 10, factor=10):
-        super(scale_block, self).__init__()
+        super(scale_block, self).__init__(name='scale_block')
 
         if (win_size > 1):
             self.merge_layer = SegMerging(d_model, win_size, layers.LayerNormalization)
@@ -90,42 +89,24 @@ class Encoder(keras.Model):
     '''
     def __init__(self, e_blocks, win_size, d_model, n_heads, d_ff, block_depth, dropout,
                 in_seg_num = 10, factor=10):
-        super(Encoder, self).__init__()
-        self.encode_blocks = []
-
-        # print("##"*10, "Block e", e_blocks)
+        super(Encoder, self).__init__(name="encoder")
+        self.encode_blocks = []        
 
         self.encode_blocks.append(scale_block(1, d_model, n_heads, d_ff, block_depth, dropout,\
                                             in_seg_num, factor))
         for i in range(1, e_blocks):
             self.encode_blocks.append(scale_block(win_size, d_model, n_heads, d_ff, block_depth, dropout,\
-                                            ceil(in_seg_num/win_size**i), factor))
-
-        # print("##"*10, "encode_blocks e", len(self.encode_blocks))
+                                            ceil(in_seg_num/win_size**i), factor))        
 
     def call(self, x):
         encode_x = []
-        encode_x.append(x)
-
-        # print("##"*10, "encode_blocks e", len(self.encode_blocks))
-
+        encode_x.append(x)        
         
-        for i, block in enumerate(self.encode_blocks):
-            # print("########## Before Block", i, "Length", len(self.encode_blocks))
-        
-            try:
-                x = block(x)
-                # print("########## After Block", i, "Length", len(self.encode_blocks))
-                # print(tf.shape(x))
-            except Exception as e:
-                print("Error in block {}: {}".format(i, e))
-                break
-        
-            encode_x.append(x)
-            # print("########## After Block", i, "Length", len(self.encode_blocks))
-
-        # print(len(encode_x))
+        for i, block in enumerate(self.encode_blocks):                          
+            x = block(x)                                                
+            encode_x.append(x)            
+            
+        return encode_x    
     
-        return encode_x
-    # def compute_output_shape(self, input_shape):
-    #     return input_shape
+    def compute_output_shape(self, input_shape):
+        return input_shape

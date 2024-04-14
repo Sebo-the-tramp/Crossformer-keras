@@ -4,7 +4,7 @@ from einops import rearrange
 
 class DSW_embedding(layers.Layer):
     def __init__(self, seg_len, d_model):
-        super(DSW_embedding, self).__init__()
+        super(DSW_embedding, self).__init__(name="DSW_embedding")
         self.seg_len = seg_len
 
         self.linear = layers.Dense(d_model)
