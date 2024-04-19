@@ -48,7 +48,7 @@ class CrossformerKeras(keras.Model):
         # Embedding
         # input_shape = (32, data_dim, in_len,)        
         self.enc_value_embedding = DSW_embedding(seg_len, d_model)
-        self.enc_pos_embedding = tf.Variable(tf.random.normal([1, data_dim, (self.pad_in_len // seg_len), d_model], dtype=tf.float64), dtype=tf.float64, trainable=True, name="enc_pos_embedding")
+        self.enc_pos_embedding = tf.Variable(tf.random.normal([1, data_dim, (self.pad_in_len // seg_len), d_model], dtype=tf.float16), dtype=tf.float16, trainable=True, name="enc_pos_embedding")
         print("ENC POS EMBEDDING", tf.shape(self.enc_pos_embedding), self.enc_pos_embedding.dtype)
         self.pre_norm = LayerNormalization(epsilon=0.001)
 
@@ -59,7 +59,7 @@ class CrossformerKeras(keras.Model):
         #mandare dentro roba nel self encode
         
         # Decoder
-        self.dec_pos_embedding = tf.Variable(tf.random.normal([1, data_dim, (self.pad_out_len // seg_len), d_model], dtype=tf.float64), dtype=tf.float64, trainable=True, name="dec_pos_embedding")
+        self.dec_pos_embedding = tf.Variable(tf.random.normal([1, data_dim, (self.pad_out_len // seg_len), d_model], dtype=tf.float16), dtype=tf.float16, trainable=True, name="dec_pos_embedding")
         self.decoder = Decoder(seg_len, e_layers + 1, d_model, n_heads, d_ff, dropout, \
                                     out_seg_num = (self.pad_out_len // seg_len), factor = factor)
 
@@ -70,13 +70,13 @@ class CrossformerKeras(keras.Model):
 
         ### READ DICT IN INPUT ####
 
-        input_X = Input(shape = [self.in_len, self.data_dim], name = "input_X", batch_size=self.batch_size, dtype=tf.float64)
+        input_X = Input(shape = [self.in_len, self.data_dim], name = "input_X", batch_size=self.batch_size, dtype=tf.float16)
         # for now
         if self.flag_input_dict:
             if (self.flag_y_vector):
-                input_y = Input((2,), name="input_y", dtype=tf.float64)
+                input_y = Input((2,), name="input_y", dtype=tf.float16)
             else:
-                input_y = Input((), name="input_y", dtype=tf.float64)
+                input_y = Input((), name="input_y", dtype=tf.float16)
 
             input_dataset = Input((), name="input_dataset", dtype = tf.int64)
             input_person = Input((), name="input_person", dtype = tf.int64)
@@ -89,14 +89,14 @@ class CrossformerKeras(keras.Model):
         ### END READING ###
 
         if self.baseline:
-            base = tf.reduce_mean(x_seq, axis=1, keepdims=True, dtype=tf.float64)
+            base = tf.reduce_mean(x_seq, axis=1, keepdims=True, dtype=tf.float16)
         else:
-            base = tf.zeros_like(x_seq[:, :self.out_len, :], dtype=tf.float64)
+            base = tf.zeros_like(x_seq[:, :self.out_len, :], dtype=tf.float16)
         batch_size = x_seq.shape[0]
         # Handling input sequence padding
         if self.in_len_add != 0:
-            padding = tf.tile(x_seq[:, :1, :], [1, self.in_len_add, 1], dtype=tf.float64)
-            x_seq = tf.concat([padding, x_seq], axis=1, dtype=tf.float64)    
+            padding = tf.tile(x_seq[:, :1, :], [1, self.in_len_add, 1], dtype=tf.float16)
+            x_seq = tf.concat([padding, x_seq], axis=1, dtype=tf.float16)    
 
         print("CHECK dtype", x_seq.dtype, self.enc_value_embedding.dtype, self.enc_pos_embedding.dtype, self.pre_norm.dtype)
 
