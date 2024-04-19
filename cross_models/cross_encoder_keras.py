@@ -2,11 +2,13 @@ import keras
 
 from keras import layers
 
-from crossformerkeras.cross_models.attn_keras import FullAttention, AttentionLayer, TwoStageAttentionLayer
+from crossformerkeras.cross_models.attn_keras import AttentionLayer, TwoStageAttentionLayer
 
 from math import ceil
 
 import tensorflow as tf
+
+from tensorflow.keras.layers import LayerNormalization
 
 class SegMerging(layers.Layer):
     '''
@@ -15,7 +17,7 @@ class SegMerging(layers.Layer):
     get representation of a coarser scale
     we set win_size = 2 in our paper
     '''
-    def __init__(self, d_model, win_size, norm_layer=tf.keras.layers.LayerNormalization,name="SegMerging"):
+    def __init__(self, d_model, win_size, norm_layer=LayerNormalization,name="SegMerging"):
         super(SegMerging, self).__init__(name=name)
         self.d_model = d_model
         self.win_size = win_size
@@ -23,7 +25,10 @@ class SegMerging(layers.Layer):
         self.norm = norm_layer(axis=-1)
 
     def call(self, x):
-        # print(tf.executing_eagerly())        
+    #    # print(tf.executing_eagerly())        
+
+        # print("X SHAPE", tf.shape(x))
+
         batch_size, ts_d, seg_num, d_model = x.shape
 
         pad_num = seg_num % self.win_size        
@@ -77,9 +82,11 @@ class scale_block(layers.Layer):
             x = self.merge_layer(x)                
 
         for layer in self.encode_layers:
-            # print("During")
+            # print("During", x.shape)
             x = layer(x)        
     
+        # print("Done")
+
         return x
     
 
@@ -98,13 +105,18 @@ class Encoder(keras.Model):
             self.encode_blocks.append(scale_block(win_size, d_model, n_heads, d_ff, block_depth, dropout,\
                                             ceil(in_seg_num/win_size**i), factor))        
 
-    def call(self, x):
+    def call(self, x):                
+
         encode_x = []
-        encode_x.append(x)        
+        encode_x.append(x)
         
-        for i, block in enumerate(self.encode_blocks):                          
-            x = block(x)                                                
+        for i, block in enumerate(self.encode_blocks):        
+            # print("ENCODING",i, x.shape)                  
+            x = block(x)              
+            # print("ENCODING INSIDE", x.shape)                                  
             encode_x.append(x)            
+
+        # print("EXITING ENCODER")
             
         return encode_x    
     

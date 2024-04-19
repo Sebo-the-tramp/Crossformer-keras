@@ -93,7 +93,7 @@ else:
 # print(args)
 
 # Set the default floating point data type
-tf.keras.backend.set_floatx('float32')
+# tf.keras.backend.set_floatx('float64')
 
 Exp = Exp_crossformer
 

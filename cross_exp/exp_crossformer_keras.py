@@ -13,6 +13,10 @@ from crossformerkeras.cross_exp.exp_basic_keras import Exp_Basic
 # from data.data_loader import Dataset_MTS
 # from torch.utils.data import DataLoader
 
+from tensorflow.keras.utils import plot_model
+
+
+
 class Exp_crossformer(Exp_Basic):
     def __init__(self, args):
         super(Exp_crossformer, self).__init__(args)
@@ -38,12 +42,21 @@ class Exp_crossformer(Exp_Basic):
         # dummy_input = tf.zeros((self.args.batch_size, self.args.in_len, self.args.data_dim))
         # Create a dummy input array matching the input specifications of your model
         # Note: Adjust the shape according to your model's expected input
-        dummy_input = np.random.random((32, model.in_len, model.data_dim)).astype('float32')  # batch_size, in_len, data_dim
+        # dummy_input = np.random.random((32, model.in_len, model.data_dim)).astype('float64')  # batch_size, in_len, data_dim
 
-        # Pass the dummy data through the model to build it
-        out = model(tf.constant(dummy_input))
-        print("outououou", out.shape)        
 
-        print(model.summary())
+        # # print("Model built not succesfully!")
+        # plot_model(model, to_file='/home/lab/Documents/scsv/tmp_cross/GLOBEM-2024/model.png', show_shapes=True)
+
+
+        # # Pass the dummy data through the model to build it
+        # # out = model(tf.constant(dummy_input))        
+
+        # # print("Model built successfully!")
+        # plot_model(model, to_file='/home/lab/Documents/scsv/tmp_cross/GLOBEM-2024/model.png', show_shapes=True)
+
+        # # print("outououou", out.shape)        
+
+        # # print(model.summary())        
 
         return model
