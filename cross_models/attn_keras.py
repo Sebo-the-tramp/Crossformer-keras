@@ -85,7 +85,7 @@ class TwoStageAttentionLayer(layers.Layer):
         self.dim_sender = AttentionLayer(d_model, n_heads, dropout = dropout, name="dim_sender")
         self.dim_receiver = AttentionLayer(d_model, n_heads, dropout = dropout, name="dim_receiver")
         
-        self.router = self.add_weight(name='router', shape=(seg_num, factor, d_model), initializer='random_normal', trainable=True, dtype=tf.float16)
+        self.router = self.add_weight(name='router', shape=(seg_num, factor, d_model), initializer='random_normal', trainable=True, dtype=tf.float32)
         
         self.dropout = layers.Dropout(dropout)
 

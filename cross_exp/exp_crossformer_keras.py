@@ -42,7 +42,7 @@ class Exp_crossformer(Exp_Basic):
         # dummy_input = tf.zeros((self.args.batch_size, self.args.in_len, self.args.data_dim))
         # Create a dummy input array matching the input specifications of your model
         # Note: Adjust the shape according to your model's expected input
-        # dummy_input = np.random.random((32, model.in_len, model.data_dim)).astype('float16')  # batch_size, in_len, data_dim
+        # dummy_input = np.random.random((32, model.in_len, model.data_dim)).astype('float32')  # batch_size, in_len, data_dim
 
 
         # # print("Model built not succesfully!")

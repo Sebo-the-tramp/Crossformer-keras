@@ -29,13 +29,13 @@ class CrossformerKeras(keras.Model):
 
         ### READ DICT IN INPUT ####
 
-        input_X = Input(shape = [self.in_len, self.data_dim], name = "input_X", batch_size=self.batch_size, dtype=tf.float16)
+        input_X = Input(shape = [self.in_len, self.data_dim], name = "input_X", batch_size=self.batch_size, dtype=tf.float32)
         # for now
         if self.flag_input_dict:
             if (self.flag_y_vector):
-                input_y = Input((2,), name="input_y", dtype=tf.float16)
+                input_y = Input((2,), name="input_y", dtype=tf.float32)
             else:
-                input_y = Input((), name="input_y", dtype=tf.float16)
+                input_y = Input((), name="input_y", dtype=tf.float32)
 
             input_dataset = Input((), name="input_dataset", dtype = tf.int64)
             input_person = Input((), name="input_person", dtype = tf.int64)
@@ -48,14 +48,14 @@ class CrossformerKeras(keras.Model):
         ### END READING ###
 
         if self.baseline:
-            base = tf.reduce_mean(x_seq, axis=1, keepdims=True, dtype=tf.float16)
+            base = tf.reduce_mean(x_seq, axis=1, keepdims=True, dtype=tf.float32)
         else:
-            base = tf.zeros_like(x_seq[:, :self.out_len, :], dtype=tf.float16)
+            base = tf.zeros_like(x_seq[:, :self.out_len, :], dtype=tf.float32)
         batch_size = x_seq.shape[0]
         # Handling input sequence padding
         if self.in_len_add != 0:
-            padding = tf.tile(x_seq[:, :1, :], [1, self.in_len_add, 1], dtype=tf.float16)
-            x_seq = tf.concat([padding, x_seq], axis=1, dtype=tf.float16)    
+            padding = tf.tile(x_seq[:, :1, :], [1, self.in_len_add, 1], dtype=tf.float32)
+            x_seq = tf.concat([padding, x_seq], axis=1, dtype=tf.float32)    
 
         # print("CHECK dtype", x_seq.dtype, self.enc_value_embedding.dtype, self.enc_pos_embedding.dtype, self.pre_norm.dtype)
 
